@@ -1,2 +1,2 @@
 # brownAlert
-A Strategy Game
+Needed a break from getting nowhere with my MoCap System, I thought I'd try writing a strategy game, based on my childhood reminiscences of _Red Alert™_.  Of course my half-baked implementation will be a bit poo, so it's Brown Alert...
