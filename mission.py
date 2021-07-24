@@ -11,6 +11,22 @@ from mapping import Map, Tile
 
 class Mission( object ):
 
+    """
+    Defines the mission parameters.  limits on tech level, settings for heat decay and shroom growth.
+    
+    Attributes:
+        field (list of lists): The battlefield as a 2D array of Tiles
+        heat_cap (int): max heat a tile can absorbe.
+        heat_decay (int): how much heat is lost per heat tick
+        map_fq (string): fully qualified path to the mission JSON
+        rand (Random): Random with a fixed seed, so some randomness is shared
+        rand_seed (int): the shared seed
+        shroom_cap (int): max shrooms that can exist on a tile
+        shroom_grow_amount (int): how much the shrooms grow, if they can
+        shroom_grow_limit (int): Shrooms can only grow above a theashold
+        shroom_spread_limit (int): Shrooms can only spread above a theashold
+    """
+    
     def __init__( self, map_fq ):
         # The mission file
         self.map_fq = map_fq
@@ -37,6 +53,12 @@ class Mission( object ):
             self.loadMap()
 
     def loadMap( self, map_fq=None ):
+        """
+        load the mission JSON
+        
+        Args:
+            map_fq (string): Overide the map that may have been passed on instansiation.
+        """
         # override
         if( map_fq is not None ):
             self.map_fq = map_fq

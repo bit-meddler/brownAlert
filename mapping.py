@@ -122,13 +122,15 @@ class Map( object ):
                     tile.shrooms += self.mission.shroom_grow_amount
 
                 if( tile.shroomCanSpread() ):
+                    pos = self.NEIGHBORS[ self.randomDirection() ]
+
                     if( self.mission.rand.randint(0,100) > 95 ):
                         # big sneaze
-                        pos = self.NEIGHBORS[ self.randomDirection() ]
                         new = ( pos[0] * 2, pos[1] * 2 )
                         target = tile.accessOffset( new )
+                        
                     else:
-                        target = tile.accessOffset( self.NEIGHBORS[ self.randomDirection() ] )
+                        target = tile.accessOffset( pos )
 
                     if( (target is not None) and target.shroomCanSpawn() ):
                         target.shrooms += self.mission.shroom_grow_amount
@@ -146,6 +148,26 @@ class Map( object ):
                     
 class Tile( object ):
 
+    """
+    
+    Attributes:
+        DATA_ATTERS (TYPE): lut of JSON dict keys to the attr they need to fill
+
+        decal (TBD): Passive enviroment art
+        decay (TBD): An art overlay that decays with time (blood, damage, skid marks)
+        dodad (TBD): Environment art that impeads or prevents movement
+        field (Map): refference to the mission 'map'
+        heat (int): Heat buildup on the tile.  Just as appearance and occupancy are shown on radar, an IR satelite can see heat
+        is_uncovered (TBD): bitfield (?) of visability for each faction
+        mission (Mission): Mission Paramiters
+        move_limit (int): Slowdown factor applied to land movement on this tile
+        occupancy_flags (int): Indicate who is in the tile
+        pos (List): [x,y] position of the tile
+        ravel_id (int): index into an unraveled 2D Array, also the UID of the Tile, may be useful for hashing
+        shrooms (int): The amount of valuable mushrooms growing on the tile
+        terrain (int): Terain Type
+    """
+    
     DATA_ATTERS = {
         "SHROOM_LIST"  : "shrooms",
         "SPEED_LIST"   : "move_limit",
@@ -160,7 +182,7 @@ class Tile( object ):
         self.ravel_id = ( self.pos[0] + (self.pos[1] * self.field.dim_y) )
 
         # Mapping
-        self.is_uncovered = False # Needs to be a flag for each faction that has seen this tile
+        self.is_uncovered = None # Needs to be a flag for each faction that has seen this tile
 
         ### Things that can be placed on the Map tile ###
         # Navigation, Placement
@@ -290,6 +312,7 @@ class Tile( object ):
         """
         This is a combination of Tile heat + Heat of units on the tile.
         If Units stay on the tile for a while it heats up.
+        If a big unit traverses it, it will pick up a little heat.
         Once it is empty it cools down.
         """
         pass
@@ -298,7 +321,7 @@ class Tile( object ):
 
     def canBuildHere( self, native=TRN_LAND ):
         """
-        Test if it's possible to place a building in this tile.  You can't must build on
+        Test if it's possible to place a building in this tile.  You must only build on
         'native' Terrain for the building, so docks on water, everything else on land.
         Also the tile must not be occupied.
 
