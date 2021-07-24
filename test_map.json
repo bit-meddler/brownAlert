@@ -1,0 +1,18 @@
+{
+    "MISSION_SETUP" : {
+        "shroom_grow_amount" : 8,
+        "Shroom_grow_limit" : 20,
+        "shroom_spread_limit" : 76,
+        "shroom_cap" : 99,
+        "rand_seed"  : 666
+    },
+    "MAP_SETUP" : {
+        "DIMS" : [16,16],
+        "BASE_TERRAIN" : 1,
+        "TERRAIN_LIST" : [[3,2,1], [20,2,1], [36,2,2], [136,3,8], [152,0,8]],
+        "TERRAIN_ART_LIST" : [],
+        "DODAD_LIST" : [],
+        "SHROOM_LIST" : [[17,50,1], [18,45,1], [32,60,1]],
+        "SPEED_LIST" : []
+    }
+}
