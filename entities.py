@@ -10,11 +10,13 @@ class Faction( object ):
     A Faction at war in the battlefield.  This could be a Human or computer Player.
     
     Attributes:
+        buildings (list): All buildings controlled by this faction
         money (int): Resources to buy buildings and units.
         name (string): Name
         power (int): Power to run buildings
         squads (TBD): Groups of units, allows coordination, and inter-unit comms
         tech_level (int): what's the max level we can build.
+        units (list): All units controlled by this faction
     """
     
     def __init__( self, name ):
@@ -29,6 +31,10 @@ class Faction( object ):
 
         # Combat
         self.squads = None
+
+        # Managment
+        self.buildings = []
+        self.units = []
 
     def strat_XXX( self ):
         """
@@ -62,7 +68,7 @@ class Faction( object ):
 
 
 """
-Make a Special case for the "Gaia" faction that 'owns' the dodads.
+TODO: Make a Special case for the "Gaia" faction that 'owns' the dodads.
 """
 
 
@@ -76,8 +82,7 @@ class Entity( Coord ):
     Attributes:
         alegiance (faction): Faction commanding this entity
         altitude (int): Hight above ground level, suppose could be below sea level for submarines
-        armour (TBD): Type of armour (needs to be a matrix of Wepon vs Armour )
-        armour_integrity (int): %age of armour remaining
+        armour (Armour): Type of armour (needs to be a matrix of Wepon vs Armour )
         grudge_list (TBD): list of Factions and or units that have done this entity damage.
         heat (int): Heat signature of the unit
         hit_points (int): Life
@@ -88,7 +93,7 @@ class Entity( Coord ):
         sight_range (int): How far into fog can this unit see
         size (list): Physical size on the game map
         sprite (TBD): Image to draw for the entity
-        weapon (TBD): Describe Weapon, damage, type, rof, cool-down
+        weapons (List of Weapon): Describe Weapon, damage, type, rof, cool-down
 
     """
     
@@ -113,7 +118,6 @@ class Entity( Coord ):
 
         # Combat
         self.hit_points = 0
-        self.armour_integrity = 0
         self.armour = None
         self.weapon = None
         self.grudge_list = None
@@ -133,21 +137,42 @@ class Entity( Coord ):
         """
         return self.is_movable
 
-    def takeDamage( self, belligerent ):
+    def takeDamage( self, projectile ):
         """
-        Take damage from the belligerent.weapon against self.armour
-        add belligerent and thier faction to the grudge list
+        Take damage from the projectile against self.armour
+        add projectile.owner and thier faction to the grudge list.
+
+        Consider Friendly Fire here.
 
         Args:
-            belligerent (Entity): Person dealing me damage
+            projectile (Projectile): Weapon dealing me damage
         """
         pass
 
-    def automate( self ):
+    def fireOn( self, target, weapon=None ):
         """
-        Virtual - process the AI or automatic processes for the entity
+        Fire on a target, noting their last position.
+            Slow moving, un-guided weapons could be dodged.
+            Fast Moving weapons will probably hit.
+            Guided Weapons will lock on.
+            Splashdamage occurs at the point of impact.
+        
+        Args:
+            target (Coord/Entity): Space or Entity being attacked
         """
         pass
+
+    def tick( self, clock ):
+        """
+        Do things
+        """
+
+        # Weapons
+        for weapon in self.weapon:
+            weapon.tick( clock )
+
+        # Armour
+        self.armour.tick( clock )
 
 
 class Commandable( Entity ):
@@ -194,6 +219,8 @@ class Commandable( Entity ):
         """
         pass
 
+     def tick( self, clock ):
+        super( Commandable, self ).tick( clock )
 
 class Structure( Commanable ):
     """
@@ -205,6 +232,9 @@ class Structure( Commanable ):
 
     def __init__( self ):
         super( Structure, self ).__init__( self )
+
+    def tick( self, clock ):
+        super( Structure, self ).tick( clock )
 
 
 class Moveable( Commanable ):
@@ -243,30 +273,53 @@ class Moveable( Commanable ):
         """
         pass
 
+    def tick( self, clock ):
+        super( Structure, self ).tick( clock )
 
+        
 class Infantry( Moveable ):
     """
     Dudes - as in "I'm in your base killing your dudes."
     """
-    pass
+    
+    def __init__( self ):
+        super( Infantry, self ).__init__( self )
+
+    def tick( self, clock ):
+        super( Infantry, self ).tick( clock )
 
 
 class Mechanized( Moveable ):
     """
     You shall have Jeeps, Trucks, and Tanks.  You're welcome.
     """
-    pass
+    
+    def __init__( self ):
+        super( Mechanized, self ).__init__( self )
+
+    def tick( self, clock ):
+        super( Mechanized, self ).tick( clock )
 
 
 class Aircraft( Moveable ):
     """
     Get to dah Choppah!
     """
-    pass
+    
+    def __init__( self ):
+        super( Aircraft, self ).__init__( self )
+
+    def tick( self, clock ):
+        super( Aircraft, self ).tick( clock )
 
 
 class Vessel( Moveable ):
     """
     Atomic wessills
     """
-    pass
+    
+    def __init__( self ):
+        super( Vessel, self ).__init__( self )
+
+    def tick( self, clock ):
+        super( Vessel, self ).tick( clock )
